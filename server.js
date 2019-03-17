@@ -99,36 +99,36 @@ mongoose.connect(MONGODB_URI, { useMongoClient: true })
     console.log("App is running on port " + PORT);
 
     // https.createServer({ key: privateKey, cert: certificate }, app).
-    const io = require('./socket').init(server);
-    io.on('connection', socket => {
-      const dt = datetime.create();
-      const currentTime = dt.format('Y/m/d');
-      Visits.find({ date: currentTime }).then(res => {
-        if (res.length <= 0) {
-          const newVisits = new Visits({
-            visits: 1,
-            date: currentTime
-          });
-          return newVisits.save();
-        } else {
-          res[0].visits += 1;
-          return res[0].save();
-        }
-      }).then(reuslts => {
-        Visits.find().then(res => {
-          io.emit('usersInfo', { action: 'totalvisits', visits: res })
-          console.log(res);
-          console.log('Client connected!');
-          socket.on('disconnect', socket => {
-            console.log('Client disconnected!');
-            const connected = io.engine.clientsCount;
-            io.emit('usersInfo', { action: 'totalConnected', connected: connected });
-          })
-          const connected = io.engine.clientsCount;
-          io.emit('usersInfo', { action: 'totalConnected', connected: connected });
-        })
-      })
-    })
+    // const io = require('./socket').init(server);
+    // io.on('connection', socket => {
+      // const dt = datetime.create();
+      // const currentTime = dt.format('Y/m/d');
+      // Visits.find({ date: currentTime }).then(res => {
+      //   if (res.length <= 0) {
+      //     const newVisits = new Visits({
+      //       visits: 1,
+      //       date: currentTime
+      //     });
+      //     return newVisits.save();
+      //   } else {
+      //     res[0].visits += 1;
+      //     return res[0].save();
+      //   }
+      // }).then(reuslts => {
+      //   Visits.find().then(res => {
+      //     io.emit('usersInfo', { action: 'totalvisits', visits: res })
+      //     console.log(res);
+      //     console.log('Client connected!');
+      //     socket.on('disconnect', socket => {
+      //       console.log('Client disconnected!');
+      //       const connected = io.engine.clientsCount;
+      //       io.emit('usersInfo', { action: 'totalConnected', connected: connected });
+      //     })
+      //     const connected = io.engine.clientsCount;
+      //     io.emit('usersInfo', { action: 'totalConnected', connected: connected });
+      //   })
+      // })
+    // })
   }).catch(err => {
     console.log(err);
   })
