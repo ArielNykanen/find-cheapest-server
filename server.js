@@ -44,7 +44,7 @@ app.use(bodyParser.json()); // application/json
 
 const uploadRoutes = require('./routes/uploads');
 
-var whitelist = ['http://localhost:4200', 'https://master.d216vg7a62cy6v.amplifyapp.com']
+var whitelist = ['https://master.d216vg7a62cy6v.amplifyapp.com', 'http://localhost:4200', 'https://master.d216vg7a62cy6v.amplifyapp.com']
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
