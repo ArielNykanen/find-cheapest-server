@@ -44,7 +44,17 @@ app.use(bodyParser.json()); // application/json
 
 const uploadRoutes = require('./routes/uploads');
 
-app.use(cors());
+var whitelist = ['http://localhost:4200', 'https://master.d216vg7a62cy6v.amplifyapp.com']
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+app.use(cors(corsOptions))
 app.use('/upload', uploadRoutes);
 // app.use(session({
 //   secret: 'my secret',
