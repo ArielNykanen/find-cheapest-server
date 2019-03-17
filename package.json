@@ -1,0 +1,58 @@
+{
+  "nodemonConfig": {
+    "ignore": [
+      "*.json"
+    ]
+  },
+  "name": "marker-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "engines": {
+    "node": "11.6.0"
+  },
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ariel Nykanen",
+  "license": "ISC",
+  "dependencies": {
+    "adf.ly": "^1.1.0",
+    "apollo-server": "^2.4.8",
+    "apollo-server-express": "^2.4.8",
+    "axios": "^0.18.0",
+    "bcryptjs": "^2.4.3",
+    "bluebird": "^3.5.3",
+    "body-parser": "^1.18.3",
+    "chalk": "^2.4.2",
+    "cheerio": "^1.0.0-rc.2",
+    "compression": "^1.7.3",
+    "cors": "^2.8.5",
+    "crawler": "^1.2.0",
+    "cross-env": "^5.2.0",
+    "crypto": "^1.0.1",
+    "cryptojs": "^2.5.3",
+    "csurf": "^1.9.0",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "express-graphql": "^0.7.1",
+    "express-session": "^1.15.6",
+    "graphql": "^14.1.1",
+    "helmet": "^3.15.1",
+    "jsonwebtoken": "^8.4.0",
+    "mongodb": "^3.1.12",
+    "mongoose": "^4.13.18",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.1",
+    "node-datetime": "^2.1.2",
+    "node-fetch": "^2.3.0",
+    "puppeteer": "^1.13.0",
+    "pusher": "^2.2.0",
+    "request": "^2.88.0",
+    "socket.io": "^2.2.0",
+    "stripe": "^6.24.0",
+    "uuid": "^3.3.2",
+    "validator": "^10.11.0"
+  }
+}

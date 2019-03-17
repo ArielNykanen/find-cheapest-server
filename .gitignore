@@ -1,0 +1,5 @@
+.env
+id_rsa.pub
+sshpk.ppk
+node_modules
+SERVER-PLANING

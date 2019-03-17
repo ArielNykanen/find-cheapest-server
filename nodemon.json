@@ -1,0 +1,8 @@
+{
+  "env": {
+    "MONGO_USER": "ariel",
+    "MONGO_PASSWORD": "12131415",
+    "MONGO_DATABASE": "find-cheapest-testing",
+    "JWT_SECRET": "secretq12wq12wa"
+  }
+}
