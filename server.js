@@ -19,17 +19,17 @@ const compression = require('compression');
 const cors = require('cors');
 // const https = require('https');
 
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header("Access-Control-Allow-Headers", 'Authorization, Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+//   res.header("Access-Control-Allow-Headers", 'Authorization, Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
+//   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+//   if (req.method === 'OPTIONS') {
+//     return res.sendStatus(200);
+//   }
+//   next();
+// });
 // const csrfProtection = csrf();
 // const privateKey = fs.readFileSync('server.key');
 // const certificate = fs.readFileSync('server.cert');
@@ -44,7 +44,7 @@ app.use(bodyParser.json()); // application/json
 
 const uploadRoutes = require('./routes/uploads');
 
-// app.use(cors());
+app.use(cors());
 app.use('/upload', uploadRoutes);
 // app.use(session({
 //   secret: 'my secret',
