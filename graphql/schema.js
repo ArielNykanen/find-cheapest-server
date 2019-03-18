@@ -420,10 +420,11 @@ const ProductRootQuery = new GraphQLObjectType({
           return await new Promise(async (resolve, reject) => {
             const fork = require('child_process').fork;
             const path = require('path');
-            const program1 = path.resolve('./web-crwalers/etsi_scraping.js');
-            const program2 = path.resolve('./web-crwalers/amazon_scraping.js');
-            const program3 = path.resolve('./web-crwalers/walmart_scraping.js');
-            const program4 = path.resolve('./web-crwalers/ebay_scraping.js');
+            const program1 = path.resolve('./web-crwalers/engine1.js');
+            // const program1 = path.resolve('./web-crwalers/etsi_scraping.js');
+            // const program2 = path.resolve('./web-crwalers/amazon_scraping.js');
+            // const program3 = path.resolve('./web-crwalers/walmart_scraping.js');
+            // const program4 = path.resolve('./web-crwalers/ebay_scraping.js');
             const pageLimiter = 3;
             let total = productsFound;
             let engineStopped = 0;
@@ -439,14 +440,14 @@ const ProductRootQuery = new GraphQLObjectType({
             // if (symbols.indexOf("etsy") > -1) {
 
             const etsiScrap = fork(program1);
-            const amazonScrap = fork(program2);
-            const walmartScrap = fork(program3);
-            const ebayScrap = fork(program4);
+            // const amazonScrap = fork(program2);
+            // const walmartScrap = fork(program3);
+            // const ebayScrap = fork(program4);
             const maxProds = 60;
             const killAll = () => {
               etsiScrap.kill();
-              amazonScrap.kill();
-              walmartScrap.kill();
+              // amazonScrap.kill();
+              // walmartScrap.kill();
               console.log(chalk.bgRed(`\n  All forks killed! \n`))
             }
             
@@ -458,7 +459,7 @@ const ProductRootQuery = new GraphQLObjectType({
                   total += +response;
                 } else {
                 console.log(chalk.bgYellow(`\n  Scraping end for: ${response}\n`))
-
+                  
                   engineStopped++;
                   
                 }

@@ -93,6 +93,7 @@ const scrapEtsy = async (searchString, page, priceFilter, prods, pageLimiter = 3
       }).toArray();
       saveToDb(list, searchString)
       if (pageCounter >= pageLimit || maxProducts < parsedResults) {
+        func('ended!');
        
         return false
       }
@@ -109,12 +110,14 @@ const scrapEtsy = async (searchString, page, priceFilter, prods, pageLimiter = 3
       console.log(chalk.cyan(`  Scraping: ${nextPageLink}`))
 
       if (pageCounter === pageLimit || maxProducts < parsedResults) {
+        func('ended!');
        
         return false
       }
 
       getWebsiteContent(nextPageLink)
     } catch (error) {
+      func('ended!');
       
       console.error(error)
       return false;
@@ -185,6 +188,7 @@ const scrapEbay = async (searchString, page, priceFilter, prods, pageLimiter = 3
       }).toArray();
       saveToDb(list, searchString)
       if (pageCounter >= pageLimit || maxProducts < parsedResults) {
+        func('ended!');
        
         return false
       }
@@ -201,12 +205,14 @@ const scrapEbay = async (searchString, page, priceFilter, prods, pageLimiter = 3
       console.log(chalk.cyan(`  Scraping: ${nextPageLink}`))
 
       if (pageCounter === pageLimit || maxProducts < parsedResults) {
+        func('ended!');
        
         return false
       }
 
       getWebsiteContent(nextPageLink)
     } catch (error) {
+      func('ended!');
       
       console.error(error)
       return false;
@@ -285,6 +291,7 @@ const scrapAmazon = async (searchString, page, priceFilter, prods, pageLimiter =
       }).toArray();
       saveToDb(list, searchString)
       if (pageCounter >= pageLimit || maxProducts < parsedResults) {
+        func('ended!');
        
         return false
       }
@@ -301,12 +308,14 @@ const scrapAmazon = async (searchString, page, priceFilter, prods, pageLimiter =
       console.log(chalk.cyan(`  Scraping: ${nextPageLink}`))
 
       if (pageCounter === pageLimit || maxProducts < parsedResults) {
+        func('ended!');
        
         return false
       }
 
       getWebsiteContent(nextPageLink)
     } catch (error) {
+      func('ended!');
       
       console.error(error)
       return false;
@@ -422,12 +431,14 @@ const scrapWalmart = async (searchString, page, priceFilter, prods, pageLimiter 
       console.log(chalk.cyan(`  Scraping: ${nextPageLink}`))
 
       if (pageCounter >= pageLimit || maxProducts < parsedResults) {
+        func('ended!');
        
         return false
       }
 
       getWebsiteContent(nextPageLink)
     } catch (error) {
+      func('ended!');
       console.error(error)
       return false;
     }
@@ -454,10 +465,10 @@ function func(input) {
 
 
 process.on('message', async (m) => {
-  scrapEtsy(m.search, m.page, m.sortBy, m.prods, m.pageLimiter);
-  scrapEbay(m.search, m.page, m.sortBy, m.prods, m.pageLimiter);
-  scrapAmazon(m.search, m.page, m.sortBy, m.prods, m.pageLimiter);
-  scrapWalmart(m.search, m.page, m.sortBy, m.prods, m.pageLimiter);
+  await scrapEtsy(m.search, m.page, m.sortBy, m.prods, m.pageLimiter);
+  await scrapEbay(m.search, m.page, m.sortBy, m.prods, m.pageLimiter);
+  await scrapAmazon(m.search, m.page, m.sortBy, m.prods, m.pageLimiter);
+  await scrapWalmart(m.search, m.page, m.sortBy, m.prods, m.pageLimiter);
 });
 
 var mongoose = require('mongoose');
