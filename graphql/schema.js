@@ -420,18 +420,14 @@ const ProductRootQuery = new GraphQLObjectType({
           return await new Promise(async (resolve, reject) => {
             const fork = require('child_process').fork;
             const path = require('path');
-            const program1 = path.resolve('./web-crwalers/engine1.js');
-            const program2 = path.resolve('./web-crwalers/engine2.js');
-            const program3 = path.resolve('./web-crwalers/engine3.js');
-            const program4 = path.resolve('./web-crwalers/engine4.js');
-            // const program1 = path.resolve('./web-crwalers/etsi_scraping.js');
-            // const program2 = path.resolve('./web-crwalers/amazon_scraping.js');
-            // const program3 = path.resolve('./web-crwalers/walmart_scraping.js');
-            // const program4 = path.resolve('./web-crwalers/ebay_scraping.js');
+            const program1 = path.resolve('./web-crwalers/etsi_scraping.js');
+            const program2 = path.resolve('./web-crwalers/amazon_scraping.js');
+            const program3 = path.resolve('./web-crwalers/walmart_scraping.js');
+            const program4 = path.resolve('./web-crwalers/ebay_scraping.js');
             const pageLimiter = 3;
             let total = productsFound;
             let engineStopped = 0;
-            let totalEngines = symbols.length;
+            let totalEngines = +symbols.length;
             // setTimeout(() => {
             //   resolve();
             // }, 2000);
@@ -450,7 +446,7 @@ const ProductRootQuery = new GraphQLObjectType({
             const killAll = () => {
               etsiScrap.kill();
               amazonScrap.kill();
-              // walmartScrap.kill();
+              walmartScrap.kill();
               console.log(chalk.bgRed(`\n  All forks killed! \n`))
             }
             
@@ -476,7 +472,7 @@ const ProductRootQuery = new GraphQLObjectType({
 
 
             if (symbols.indexOf("amazon") > -1) {
-              amazonScrap.send({ search: args.search, page: page+1, sortBy: sortBy, prods: prods, pageLimiter: pageLimiter });
+              amazonScrap.send({ search: args.search, page: page, sortBy: sortBy, prods: prods, pageLimiter: pageLimiter });
               amazonScrap.on('message', function (response) {
                 if (Number(response)) {
                   total += +response;
@@ -493,7 +489,7 @@ const ProductRootQuery = new GraphQLObjectType({
             }
 
             if (symbols.indexOf("walmart") > -1) {
-              walmartScrap.send({ search: args.search, page: page+2, sortBy: sortBy, prods: prods, pageLimiter: pageLimiter });
+              walmartScrap.send({ search: args.search, page: page, sortBy: sortBy, prods: prods, pageLimiter: pageLimiter });
               walmartScrap.on('message', function (response) {
                 if (Number(response)) {
                   total += +response;
@@ -512,7 +508,7 @@ const ProductRootQuery = new GraphQLObjectType({
 
 
             if (symbols.indexOf("ebay") > -1) {
-              ebayScrap.send({ search: args.search, page: page+3, sortBy: sortBy, prods: prods, pageLimiter: pageLimiter });
+              ebayScrap.send({ search: args.search, page: page, sortBy: sortBy, prods: prods, pageLimiter: pageLimiter });
               ebayScrap.on('message', function (response) {
                 if (Number(response)) {
                   total += +response;
