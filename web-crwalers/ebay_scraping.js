@@ -106,18 +106,19 @@ const scrap = async (searchString, page, priceFilter, prods, searchAlot = false)
         }
         // })
         // Pagination Elements Link
-        let nextPageLink = `https://www.ebay.com/sch/i.html?_from=R40&_nkw=${searchString}&_sacat=0&_pgn=${page++}`;
+        pageCounter++;
+        page++;
+        let nextPageLink = `https://www.ebay.com/sch/i.html?_from=R40&_nkw=${searchString}&_sacat=0&_pgn=${page}`;
         if (priceFilter === -1) {
           nextPageLink = `https://www.ebay.com/sch/i.html?_from=R40&_nkw=${searchString}&_sacat=0&_sop=16&_pgn=${page}`;
         } else if (priceFilter === 1) {
           nextPageLink = `https://www.ebay.com/sch/i.html?_from=R40&_nkw=${searchString}&_sacat=0&_sop=15&_pgn=${page}`;
         }
         console.log(chalk.cyan(`  Scraping: ${nextPageLink}`))
-        pageCounter++
 
         if (pageCounter === pageLimit || maxProducts < parsedResults) {
           resolve('Good!')
-          func('end');
+          func('ebay');
 
           return false
         }
@@ -126,7 +127,7 @@ const scrap = async (searchString, page, priceFilter, prods, searchAlot = false)
       } catch (error) {
         reject(error);
         console.error(error)
-        func('end');
+        func('ebay');
         return false;
       }
     }
@@ -139,9 +140,6 @@ function func(input) {
 }
 
 process.on('message', async (m) => {
-  scrap(m.search, m.page, m.sortBy, m.prods);
-  scrap(m.search, m.page + 1, m.sortBy, m.prods);
-  scrap(m.search, m.page + 2, m.sortBy, m.prods);
   scrap(m.search, m.page + 3, m.sortBy, m.prods);
 });
 var mongoose = require('mongoose');

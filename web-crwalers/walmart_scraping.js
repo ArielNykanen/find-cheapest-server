@@ -137,19 +137,24 @@ const scrap = async (searchString, page, priceFilter, prods, searchAlot = false)
         // Pagination Elements Link
         pageCounter++;
         page++;
-        const nextPageLink = url.split('page')[0] + 'page=' + page + `&query=${searchString}#searchProductResult`;
+        let nextPageLink = `https://www.walmart.com/search/?cat_id=0&page=${page}&query=${searchString}#searchProductResult`;
+        if (priceFilter === -1) {
+          nextPageLink = `https://www.walmart.com/search/?cat_id=0&page=${page}&query=${searchString}&sort=price_high#searchProductResult`;
+        } else if (priceFilter === 1) {
+          nextPageLink = `https://www.walmart.com/search/?cat_id=0&page=${page}&query=${searchString}&sort=price_low#searchProductResult`
+        }
         console.log(chalk.cyan(`  Scraping: ${nextPageLink}`))
 
         if (pageCounter >= pageLimit || maxProducts < parsedResults) {
           resolve('Good!')
-          func('end');
+          func('walmart');
           return false
         }
 
         getWebsiteContent(nextPageLink)
       } catch (error) {
         console.error(error)
-        func('end');
+        func('walmart');
         return false;
       }
     }
@@ -163,9 +168,6 @@ function func(input) {
 
 process.on('message', async (m) => {
   scrap(m.search, m.page, m.sortBy, m.prods);
-  scrap(m.search, m.page + 1, m.sortBy, m.prods);
-  scrap(m.search, m.page + 2, m.sortBy, m.prods);
-  scrap(m.search, m.page + 3, m.sortBy, m.prods);
 });
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');

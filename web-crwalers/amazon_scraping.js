@@ -113,18 +113,19 @@ const scrap = async (searchString, page, priceFilter, prods, searchAlot = false)
         }
         // })
         // Pagination Elements Link
-        let nextPageLink = `https://www.amazon.com/s?k=${searchString}&page=${page++}`;
+        pageCounter++;
+        page++;
+        let nextPageLink = `https://www.amazon.com/s?k=${searchString}&page=${page}`;
         if (priceFilter === -1) {
           nextPageLink = `https://www.amazon.com/s?k=${searchString}&s=price-desc-rank&page=${page}`;
         } else if (priceFilter === 1) {
           nextPageLink = `https://www.amazon.com/s?k=${searchString}&s=price-asc-rank&page=${page}`
         }
         console.log(chalk.cyan(`  Scraping: ${nextPageLink}`))
-        pageCounter++
 
         if (pageCounter === pageLimit || maxProducts < parsedResults) {
           resolve('Good!')
-          func('end');
+          func('amazon');
           return false
         }
 
@@ -132,7 +133,7 @@ const scrap = async (searchString, page, priceFilter, prods, searchAlot = false)
       } catch (error) {
         reject(error);
         console.error(error)
-        func('end');
+        func('amazon');
         return false;
       }
     }
@@ -145,9 +146,6 @@ function func(input) {
 }
 
 process.on('message', async (m) => {
-  scrap(m.search, m.page, m.sortBy, m.prods);
-  scrap(m.search, m.page + 1, m.sortBy, m.prods);
-  scrap(m.search, m.page + 2, m.sortBy, m.prods);
   scrap(m.search, m.page + 3, m.sortBy, m.prods);
 });
 var mongoose = require('mongoose');

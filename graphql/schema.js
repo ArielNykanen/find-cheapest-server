@@ -346,38 +346,7 @@ const ProductRootQuery = new GraphQLObjectType({
         priceSorting: { type: GraphQLString },
       },
       resolve: async (parent, args) => {
-        const productCrwaler = require('../web-crwalers/product_scraping');
-        const saveToDb = async (results, searchString) => {
-          await Promise.all(results.map(async (prod) => {
-            const prodCheck = await AffProduct.find({ title: prod.title });
-            if (prodCheck.length <= 0) {
-              console.log(prod);
 
-              if (prod && prod.title != '' && Number(prod.price) && prod.image != '' && prod.affiliateLink != '') {
-                const newAffiliateProd = await new AffProduct({
-                  title: prod.title,
-                  price: prod.price,
-                  quantity: 1,
-                  image: prod.image,
-                  affiliateLink: prod.affiliateLink,
-                  symbol: prod.symbol,
-                  logo: prod.logo,
-                  prodLink: prod.prodLink,
-                  productClickRate: 0,
-                  rating: +prod.rating,
-                  relatedKeyWords: searchString
-                });
-                await newAffiliateProd.save();
-                TOTAL_PRODUCTS_FOUND++;
-                console.log('Total Products Found = ' + TOTAL_PRODUCTS_FOUND);
-
-              }
-            } else {
-              prodCheck[0].relatedKeyWords + ' ' + searchString;
-              await prodCheck[0].save();
-            }
-          }));
-        }
         if (!args.page) {
           page = 1;
         }
@@ -414,8 +383,10 @@ const ProductRootQuery = new GraphQLObjectType({
           sortBy = 1;
         }
         if (args.symbols) {
-          symbolsArr = await args.symbols.split(',');
-          symbolsArr.pop();
+          // symbolsArr = await args.symbols.split(',');
+          // symbolsArr.pop();
+          symbolsArr = ['amazon', 'etsy', 'ebay', 'walmart'];
+
         }
         let rating = 0;
         if (args.rating) {
@@ -445,7 +416,7 @@ const ProductRootQuery = new GraphQLObjectType({
 
         // const targetRes = await productCrwaler.getSearchResults.target(args.search, args.page);
         // console.log('Etsy done. res = ' + etsyRes.length);
-        scrapProducts = async (prods, symbols, searchMore = false) => {
+        scrapProducts = async (productsFound, prods, symbols, searchMore = false) => {
           return await new Promise(async (resolve, reject) => {
             const fork = require('child_process').fork;
             const path = require('path');
@@ -453,9 +424,10 @@ const ProductRootQuery = new GraphQLObjectType({
             const program2 = path.resolve('./web-crwalers/amazon_scraping.js');
             const program3 = path.resolve('./web-crwalers/walmart_scraping.js');
             const program4 = path.resolve('./web-crwalers/ebay_scraping.js');
-            let total = 0;
+            let total = productsFound;
             let engineStopped = 0;
             let totalEngines = +symbols.length;
+            
             // if (symbols.indexOf("amazon") > -1) {
             //    productCrwaler.getSearchResults.amazon(args.search, args.page, sortBy, prods, searchMore).catch(e => {
             //     throw new Error('Cant Find Results');
@@ -472,23 +444,27 @@ const ProductRootQuery = new GraphQLObjectType({
               etsiScrap.kill();
               amazonScrap.kill();
               walmartScrap.kill();
+              console.log(chalk.bgRed(`\n  All forks killed! \n`))
+              resolve();
             }
             
 
-            if (symbols.indexOf("etsi") > -1) {
+            if (symbols.indexOf("etsy") > -1) {
               etsiScrap.send({ search: args.search, page: args.page, sortBy: sortBy, prods: prods });
               etsiScrap.on('message', function (response) {
                 if (Number(response)) {
                   total += +response;
                 } else {
+                console.log(chalk.bgYellow(`\n  Scraping end for: ${response}\n`))
+
                   engineStopped++;
                   
                 }
                   console.log(chalk.white.bgGreen(`\n  Total found:${chalk.underline.bold(total)}\n`))
-                if (total > 16 || engineStopped === totalEngines) {
-                    killAll();
-                    resolve();
-                  return;
+                if (total > 16) {
+                  resolve();
+                } else if (total > 32 || engineStopped === totalEngines){
+                  killAll();
                 }
               });
             }
@@ -500,18 +476,17 @@ const ProductRootQuery = new GraphQLObjectType({
                 if (Number(response)) {
                   total += +response;
                 } else {
+                console.log(chalk.bgYellow(`\n  Scraping end for: ${response}\n`))
                   engineStopped++;
-  
                 }
                 console.log(chalk.white.bgGreen(`\n  Total found:${chalk.underline.bold(total)}\n`))
-                if (total > 16 || engineStopped === totalEngines) {
-                  killAll();
+                if (total > 16) {
                   resolve();
-                  return;
+                } else if (total > 32 || engineStopped === totalEngines){
+                  killAll();
                 }
               });
             }
-
 
             if (symbols.indexOf("walmart") > -1) {
               walmartScrap.send({ search: args.search, page: args.page, sortBy: sortBy, prods: prods });
@@ -519,14 +494,15 @@ const ProductRootQuery = new GraphQLObjectType({
                 if (Number(response)) {
                   total += +response;
                 } else {
+                console.log(chalk.bgYellow(`\n  Scraping end for: ${response}\n`))
+
                   engineStopped++;
-  
                 }
                 console.log(chalk.white.bgGreen(`\n  Total found:${chalk.underline.bold(total)}\n`))
-                if (total > 16 || engineStopped === totalEngines) {
-                  killAll();
+                if (total > 16) {
                   resolve();
-                  return;
+                } else if (total > 32 || engineStopped === totalEngines){
+                  killAll();
                 }
               });
             }
@@ -538,14 +514,15 @@ const ProductRootQuery = new GraphQLObjectType({
                 if (Number(response)) {
                   total += +response;
                 } else {
+                console.log(chalk.bgYellow(`\n  Scraping end for: ${response}\n`))
+
                   engineStopped++;
-  
                 }
                 console.log(chalk.white.bgGreen(`\n  Total found:${chalk.underline.bold(total)}\n`))
-                if (total > 16 || engineStopped === totalEngines) {
-                  killAll();
+                if (total > 16) {
                   resolve();
-                  return;
+                } else if (total > 32 || engineStopped === totalEngines){
+                  killAll();
                 }
               });
             }
@@ -553,12 +530,10 @@ const ProductRootQuery = new GraphQLObjectType({
 
 
           });
-        
         }
         if (searchCheck < perPage + 1) {
           // const numOfProdsPerSearch = Math.floor(20 / symbolsArr.length);
-          const numOfProdsPerSearch = 16;
-          await scrapProducts(numOfProdsPerSearch, symbolsArr);
+          await scrapProducts(searchCheck, perPage, symbolsArr);
         }
 
 
@@ -624,13 +599,13 @@ const ProductRootQuery = new GraphQLObjectType({
         console.log((secs / 1000).toFixed(2));
 
         // scrapProducts(16, symbolsArr, true);
-        if (totalProducts < perPage * 2) {
-          let numOfProdsPerSearch = 16;
-          if (totalProducts > perPage) {
-            numOfProdsPerSearch = 8;
-          }
-          scrapProducts(numOfProdsPerSearch, symbolsArr);
-        }
+        // if (totalProducts < perPage * 2) {
+        //   let numOfProdsPerSearch = 16;
+        //   if (totalProducts > perPage) {
+        //     numOfProdsPerSearch = 8;
+        //   }
+        //   scrapProducts(numOfProdsPerSearch, symbolsArr);
+        // }
 
         return {
           products: searchFiltered,

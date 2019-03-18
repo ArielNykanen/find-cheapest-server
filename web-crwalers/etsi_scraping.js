@@ -97,13 +97,19 @@ const scrap = async (searchString, page = '1', priceFilter = '1', prods = 16) =>
         await saveToDb(list, searchString);
         // })
         // Pagination Elements Link
-        const nextPageLink = $('.clearfix').find('.list-unstyled').find('.is-selected').next().find('a').attr('href')
-        console.log(chalk.cyan(`  Scraping: ${nextPageLink}`))
         pageCounter++
+        page++
+        let nextPageLink = `https://www.etsy.com/il-en/search?q=${searchString}&ref=pagination&page=${page}`
+        if (priceFilter === -1) {
+          nextPageLink = `https://www.etsy.com/il-en/search?q=${searchString}&explicit=1&order=price_desc&ref=pagination&page=${page}`;
+        } else if (priceFilter === 1) {
+          nextPageLink = `https://www.etsy.com/il-en/search?q=${searchString}&explicit=1&order=price_asc&ref=pagination&page=${page}`
+        }
+        console.log(chalk.cyan(`  Scraping: ${nextPageLink}`))
 
         if (pageCounter >= pageLimit || prods < parsedResults) {
           resolve('Good!')
-          func('end');
+          func('etsi');
 
           return false
         }
@@ -112,7 +118,7 @@ const scrap = async (searchString, page = '1', priceFilter = '1', prods = 16) =>
       } catch (error) {
         reject(error)
         console.error(error)
-        func('end');
+        func('etsi');
         return false;
       }
     }
@@ -124,9 +130,6 @@ function func(input) {
 }
 
 process.on('message', async (m) => {
-  scrap(m.search, m.page, m.sortBy, m.prods);
-  scrap(m.search, m.page+1, m.sortBy, m.prods);
-  scrap(m.search, m.page+2, m.sortBy, m.prods);
   scrap(m.search, m.page+3, m.sortBy, m.prods);
 });
 var mongoose = require('mongoose');
