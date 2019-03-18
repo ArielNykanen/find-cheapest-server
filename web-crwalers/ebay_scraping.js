@@ -37,7 +37,7 @@ const saveToDb = async (results, searchString) => {
 }
 // ? saves the products results in the json file
 
-const scrap = async (searchString, page, priceFilter, prods, searchAlot = false) => {
+const scrap = async (searchString, page, priceFilter, prods, pageLimiter = 3) => {
   getRetry = 0;
   return await new Promise(async (resolve, reject) => {
     let url = `https://www.ebay.com/sch/i.html?_from=R40&_nkw=${searchString}&_sacat=0&_pgn=${page}`;
@@ -49,13 +49,10 @@ const scrap = async (searchString, page, priceFilter, prods, searchAlot = false)
 
     const outputFile = 'data.json'
     const parsedResults = []
-    const pageLimit = 6
+    const pageLimit = pageLimiter;
     let pageCounter = 0
     let resultCount = 0
     let maxProducts = prods;
-    if (searchAlot) {
-      maxProducts = 60;
-    }
 
     console.log(chalk.yellow.bgBlue(`\n  Scraping of ${chalk.underline.bold(url)} initiated...\n`))
 
@@ -140,7 +137,7 @@ function func(input) {
 }
 
 process.on('message', async (m) => {
-  scrap(m.search, m.page + 3, m.sortBy, m.prods);
+  scrap(m.search, m.page, m.sortBy, m.prods, m.pageLimiter);
 });
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');

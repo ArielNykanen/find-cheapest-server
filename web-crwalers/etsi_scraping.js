@@ -36,7 +36,7 @@ const saveToDb = async (results, searchString) => {
 }
 // ? saves the products results in the json file
 
-const scrap = async (searchString, page = '1', priceFilter = '1', prods = 16) => {
+const scrap = async (searchString, page = '1', priceFilter = '1', prods = 16, pageLimiter = 3) => {
   getRetry = 0;
   return await new Promise(async (resolve, reject) => {
     let url = `https://www.etsy.com/il-en/search?q=${searchString}&ref=pagination&page=${page}`
@@ -48,7 +48,7 @@ const scrap = async (searchString, page = '1', priceFilter = '1', prods = 16) =>
 
     const outputFile = 'data.json'
     const parsedResults = []
-    const pageLimit = 6
+    const pageLimit = pageLimiter;
     let pageCounter = 0
     let resultCount = 0
 
@@ -130,7 +130,7 @@ function func(input) {
 }
 
 process.on('message', async (m) => {
-  scrap(m.search, m.page+3, m.sortBy, m.prods);
+  scrap(m.search, m.page, m.sortBy, m.prods, m.pageLimiter);
 });
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');

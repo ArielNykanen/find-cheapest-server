@@ -37,18 +37,16 @@ const saveToDb = async (results, searchString) => {
 }
 // ? saves the products results in the json file
 
-const scrap = async (searchString, page, priceFilter, prods, searchAlot = false) => {
+const scrap = async (searchString, page, priceFilter, prods, pageLimiter = 3) => {
 
   return await new Promise(async (resolve, reject) => {
     const outputFile = 'data.json'
     const parsedResults = []
-    const pageLimit = 6
+    const pageLimit = pageLimiter;
     let pageCounter = 0
     let resultCount = 0
     let maxProducts = prods;
-    if (searchAlot) {
-      maxProducts = 32;
-    }
+    
     let url = `https://www.walmart.com/search/?cat_id=0&page=${page}&query=${searchString}#searchProductResult`;
     if (priceFilter === -1) {
       url = `https://www.walmart.com/search/?cat_id=0&page=${page}&query=${searchString}&sort=price_high#searchProductResult`;
@@ -167,7 +165,7 @@ function func(input) {
 }
 
 process.on('message', async (m) => {
-  scrap(m.search, m.page, m.sortBy, m.prods);
+  scrap(m.search, m.page, m.sortBy, m.prods, m.pageLimiter);
 });
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
