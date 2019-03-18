@@ -107,7 +107,7 @@ const scrap = async (searchString, page = '1', priceFilter = '1', prods = 16, pa
         }
         console.log(chalk.cyan(`  Scraping: ${nextPageLink}`))
 
-        if (pageCounter >= pageLimit || prods < parsedResults) {
+        if (pageCounter >= pageLimit || prods < parsedResults.length) {
           resolve('Good!')
           func('etsi');
 

@@ -104,7 +104,8 @@ const scrap = async (searchString, page, priceFilter, prods, pageLimiter = 3) =>
           return newProdcut;
         }).toArray();
         await saveToDb(list, searchString)
-        if (pageCounter >= pageLimit || maxProducts < parsedResults) {
+        if (pageCounter >= pageLimit || maxProducts < parsedResults.length) {
+          func('amazon');
           resolve('Good!')
           return false
         }
@@ -120,7 +121,7 @@ const scrap = async (searchString, page, priceFilter, prods, pageLimiter = 3) =>
         }
         console.log(chalk.cyan(`  Scraping: ${nextPageLink}`))
 
-        if (pageCounter === pageLimit || maxProducts < parsedResults) {
+        if (pageCounter === pageLimit || maxProducts < parsedResults.length) {
           resolve('Good!')
           func('amazon');
           return false

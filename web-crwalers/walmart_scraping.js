@@ -46,7 +46,7 @@ const scrap = async (searchString, page, priceFilter, prods, pageLimiter = 3) =>
     let pageCounter = 0
     let resultCount = 0
     let maxProducts = prods;
-    
+
     let url = `https://www.walmart.com/search/?cat_id=0&page=${page}&query=${searchString}#searchProductResult`;
     if (priceFilter === -1) {
       url = `https://www.walmart.com/search/?cat_id=0&page=${page}&query=${searchString}&sort=price_high#searchProductResult`;
@@ -143,7 +143,7 @@ const scrap = async (searchString, page, priceFilter, prods, pageLimiter = 3) =>
         }
         console.log(chalk.cyan(`  Scraping: ${nextPageLink}`))
 
-        if (pageCounter >= pageLimit || maxProducts < parsedResults) {
+        if (pageCounter >= pageLimit || maxProducts < parsedResults.length) {
           resolve('Good!')
           func('walmart');
           return false
