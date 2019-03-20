@@ -1,16 +1,16 @@
 const graphql = require('graphql');
-const Product = require('../models/product');
+// const Product = require('../models/product');
 const Symbol = require('../models/Symbol');
 const AffProduct = require('../models/affiliate-product');
 const User = require('../models/user');
-const Order = require('../models/order');
-const Category = require('../models/categroy').category;
-const SubCategory = require('../models/categroy').subCategory;
+// const Order = require('../models/order');
+// const Category = require('../models/categroy').category;
+// const SubCategory = require('../models/categroy').subCategory;
 const jwt = require('jsonwebtoken');
 const datetime = require('node-datetime');
 const MainPage = require('../models/main-page');
 const Visits = require('../models/visit-tracker');
-const ProductTracker = require('../models/product-tracker');
+// const ProductTracker = require('../models/product-tracker');
 const io = require('../socket');
 const puppeteer = require('puppeteer');
 const request = require('request');
@@ -396,15 +396,22 @@ const ProductRootQuery = new GraphQLObjectType({
           rating = 0;
         }
 
-
+        
+        var regex = new RegExp(` ${args.search} `, 'i');
+        var regex2 = new RegExp(args.search, 'i');
         let qSearch = [
-          { relatedKeyWords: args.search },
+          { title: regex2 },
         ];
-
+        let sss = args.search.split(' ');
+        Promise.all(sss.forEach(key => {
+          let aaa = new RegExp(key, 'i');
+          qSearch.push({ title: aaa })
+        }))
         const searchCheck = await AffProduct.find(
           {
             $or: qSearch
           },
+          { score: { $meta: "textScore" } },
           function (err, docs) { }
         ).where('price').lt(upperLimit)
           .where({ 'symbol': symbolsArr })
@@ -412,7 +419,7 @@ const ProductRootQuery = new GraphQLObjectType({
           .sort({ price: sortBy })
           .skip((args.page - 1) * perPage)
           .count();
-
+          
 
         // const targetRes = await productCrwaler.getSearchResults.target(args.search, args.page);
         // console.log('Etsy done. res = ' + etsyRes.length);
@@ -428,15 +435,7 @@ const ProductRootQuery = new GraphQLObjectType({
             let total = productsFound;
             let engineStopped = 0;
             let totalEngines = +symbols.length;
-            // setTimeout(() => {
-            //   resolve();
-            // }, 2000);
-            // if (symbols.indexOf("amazon") > -1) {
-            //    productCrwaler.getSearchResults.amazon(args.search, args.page, sortBy, prods, searchMore).catch(e => {
-            //     throw new Error('Cant Find Results');
-            //   });
-            // }
-            // if (symbols.indexOf("etsy") > -1) {
+           
 
             const etsiScrap = fork(program1);
             const amazonScrap = fork(program2);
@@ -456,8 +455,6 @@ const ProductRootQuery = new GraphQLObjectType({
               etsiScrap.on('message', function (response) {
                 if (!Number(response)) {
                   engineStopped++;
-                  console.log(engineStopped);
-                  
                 }
                 if (engineStopped >= totalEngines) {
                   resolve();
@@ -472,7 +469,6 @@ const ProductRootQuery = new GraphQLObjectType({
               amazonScrap.on('message', function (response) {
                 if (!Number(response)) {
                   engineStopped++;
-                  console.log(engineStopped);
                 }
                 if (engineStopped >= totalEngines) {
                   resolve();
@@ -486,7 +482,6 @@ const ProductRootQuery = new GraphQLObjectType({
               walmartScrap.on('message', function (response) {
                 if (!Number(response)) {
                   engineStopped++;
-                  console.log(engineStopped);
                 }
                 if (engineStopped >= totalEngines) {
                   resolve();
@@ -501,7 +496,6 @@ const ProductRootQuery = new GraphQLObjectType({
               ebayScrap.on('message', function (response) {
                 if (!Number(response)) {
                   engineStopped++;
-                  console.log(engineStopped);
                 }
                 if (engineStopped >= totalEngines) {
                   resolve();
@@ -531,9 +525,9 @@ const ProductRootQuery = new GraphQLObjectType({
             {
               $or: qSearch
             },
-            function (err, docs) {
-              console.log(err);
-            }
+            { score: { $meta: "textScore" } },
+
+            function (err, docs) { }
           ).where('price')
             .lt(upperLimit)
             .where({ 'symbol': symbolsArr })
@@ -554,6 +548,8 @@ const ProductRootQuery = new GraphQLObjectType({
           {
             $or: qSearch
           },
+          { score: { $meta: "textScore" } },
+
           function (err, docs) {
             console.log(err);
           }
@@ -567,6 +563,8 @@ const ProductRootQuery = new GraphQLObjectType({
           {
             $or: qSearch
           },
+          { score: { $meta: "textScore" } },
+
           function (err, docs) { }
         ).where('price').lt(upperLimit)
           .where({ 'symbol': symbolsArr })

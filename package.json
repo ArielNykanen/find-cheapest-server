@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --max-old-space-size=8192 scrapers.js"
   },
   "author": "Ariel Nykanen",
   "license": "ISC",
